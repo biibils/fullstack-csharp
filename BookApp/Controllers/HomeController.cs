@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using BookApp.Models;
+using WebApp.Models;
 
-namespace BookApp.Controllers;
-
-public class HomeController : Controller
+namespace WebApp.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
+    public class HomeController : Controller
+    {
+        private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger)
     {
@@ -15,6 +15,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        ViewData["Message"] = "Welcome to WEB MVC for Books!";
         return View();
     }
 
@@ -29,3 +30,6 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
+}
+
+

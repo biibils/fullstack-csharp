@@ -1,0 +1,18 @@
+@model WebAppMVC.Models.Books
+
+@{
+    ViewBag.Title = "Detail Buku";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<div>
+    <p><strong>ID Buku:</strong> @Model.Id</p>
+    <p><strong>Judul:</strong> @Model.Title</p>
+    <p><strong>Penulis:</strong> @Model.Author</p>
+    <p><strong>Harga:</strong> @Model.Price.ToString("C")</p>
+    <p><strong>Genre:</strong> @Model.Genre</p>
+    <p><strong>Tahun Terbit:</strong> @Model.PublishedYear</p>
+</div>
+
+<a asp-controller="Books" asp-action="Index">← Kembali ke Daftar Buku</a>

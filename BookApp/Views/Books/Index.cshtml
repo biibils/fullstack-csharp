@@ -1,0 +1,16 @@
+@model IEnumerable<WebAppMVC.Models.Books>
+
+@{
+    ViewBag.Title = "Daftar Buku";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<ul>
+    @foreach (var books in Model)
+    {
+        <li>
+            <a asp-action="Details" asp-route-id="@books.Id">@books.Title</a> oleh @books.Author
+        </li>
+    }
+</ul>

@@ -1,6 +1,6 @@
-using WebAppMVC.Models;
+using BookApp.Models;
 
-namespace WebAppMVC.Data
+namespace BookApp.Data
 {
     public static class BookData
     {

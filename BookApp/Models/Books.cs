@@ -1,4 +1,4 @@
-namespace WebAppMVC.Models
+namespace BookApp.Models
 {
     public class Books
     {

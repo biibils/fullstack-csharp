@@ -20,7 +20,7 @@ namespace WebAppMVC.Controllers
         public IActionResult Index()
         {
             var students = _studentService.GetAllStudents();
-            return ViewTechnology(students);
+            return View(students);
         }
         
         // GET: Student/Create
@@ -94,7 +94,7 @@ namespace WebAppMVC.Controllers
         }
 
         // GET: Student/Details/{id}
-        public IActionResult Details(Student student)
+        public IActionResult Details(int id)
         {
             var student = _studentService.GetStudentById(id);
             if (student == null)

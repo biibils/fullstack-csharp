@@ -10,9 +10,9 @@ namespace WebAppMVC.Services
         {
             _students = new List<Student>
             {
-                new Student { Id = 1, Name = "Alice", Age = 20 },
-                new Student { Id = 2, Name = "Bob", Age = 22 },
-                new Student { Id = 3, Name = "Charlie", Age = 21 }
+                new Student { Id = 1, Name = "Alice", Email = "alice@example.com", Age = 20 },
+                new Student { Id = 2, Name = "Bob", Email = "Bob@example.com", Age = 22 },
+                new Student { Id = 3, Name = "Charlie", Email = "charlie@example.com", Age = 21 }
             };
         }
 
@@ -21,12 +21,18 @@ namespace WebAppMVC.Services
             return _students;
         }
 
-        public Student GetStudentById(int id)
+        public Student? GetStudentById(int id)
         {
             return _students.FirstOrDefault(s => s.Id == id);
         }
 
         public void AddStudent(Student student)
+        {
+            student.Id = _students.Any() ? _students.Max(s => s.Id) +1 : 1;
+            _students.Add(student);
+        }
+
+        public void UpdateStudent(Student student)
         {
             var existingStudent = _students.FirstOrDefault(s => s.Id == student.Id);
             if (existingStudent != null)

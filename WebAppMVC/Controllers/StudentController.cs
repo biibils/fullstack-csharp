@@ -3,6 +3,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using WebAppMVC.Models;
+using WebAppMVC.ViewModels;
 using WebAppMVC.Services;
 
 namespace WebAppMVC.Controllers
@@ -17,10 +18,37 @@ namespace WebAppMVC.Controllers
             _studentService = studentService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? search, int? minAge, int? maxAge)
         {
             var students = _studentService.GetAllStudents();
-            return View(students);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                students = students.Where(s => s.Name.Contains(search) || s.Email.Contains(search)).ToList();
+            }
+            if (minAge.HasValue)
+            {
+                students = students.Where(s => s.Age >= minAge.Value).ToList();
+            }
+            if (maxAge.HasValue)
+            {
+                students = students.Where(s => s.Age <= maxAge.Value).ToList();
+            }
+
+            var vm = new StudentFilterViewModel
+            {
+                Search = search,
+                MinAge = minAge,
+                MaxAge = maxAge,
+                Students = students.Select(s => new StudentViewModel
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Email = s.Email,
+                    Age = s.Age
+                }).ToList()
+            };
+            return View(vm);
         }
         
         // GET: Student/Create

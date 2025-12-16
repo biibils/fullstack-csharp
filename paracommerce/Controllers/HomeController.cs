@@ -1,21 +1,38 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using paracommerce.Models;
+using paracommerce.Services;
 
 namespace paracommerce.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly IProductService _productService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(IProductService productService)
     {
-        _logger = logger;
+        _productService = productService;
     }
 
     public IActionResult Index()
     {
-        return View();
+        var products = _productService.GetAllProducts();
+
+        var viewModel = products.Select(p => new ViewProduct
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            StockQuantity = p.StockQuantity
+        }).ToList();
+
+        if (!products.Any())
+        {
+            ViewBag.Message = "Belum ada produk";
+        }
+
+        return View(viewModel);
     }
 
     public IActionResult Privacy()

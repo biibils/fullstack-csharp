@@ -18,6 +18,11 @@ namespace paracommerce.Controllers
         public IActionResult Index()
         {
             var products = _productService.GetAllProducts();
+
+            if (!products.Any())
+            {
+                ViewBag.Message = "Belum ada produk yang ditambahkan.";
+            }
             return View(products);
         }
 

@@ -6,14 +6,9 @@ namespace paracommerce.Services
     {
         private readonly List<Product> _products;
 
-        public ProductService()
+        public ProductService(List<Product>? products = null)
         {
-            _products = new List<Product>
-            {
-                new Product { Id = 1, Name = "Laptop", Description = "High performance laptop", Price = 1200.00M, StockQuantity = 10 },
-                new Product { Id = 2, Name = "Smartphone", Description = "Latest model smartphone", Price = 800.00M, StockQuantity = 25 },
-                new Product { Id = 3, Name = "Desk Chair", Description = "Ergonomic office chair", Price = 150.00M, StockQuantity = 15 }
-            };
+            _products = products ?? new List<Product>();
         }
 
         public List<Product> GetAllProducts()
@@ -23,18 +18,29 @@ namespace paracommerce.Services
 
         public Product? GetProductById(int id)
         {
+            if (!_products.Any())
+            {
+                return null;
+            }
             return _products.FirstOrDefault(p => p.Id == id);
         }
 
         public void AddProduct(Product product)
         {
+            if (product == null)
+                return;
+
             product.Id = _products.Any() ? _products.Max(p => p.Id) + 1 : 1;
             _products.Add(product);
         }
 
         public void UpdateProduct(Product product)
         {
+            if (!_products.Any() || product == null)
+                return;
+
             var existingProduct = _products.FirstOrDefault(p => p.Id == product.Id);
+            
             if (existingProduct != null)
             {
                 existingProduct.Name = product.Name;
@@ -46,6 +52,9 @@ namespace paracommerce.Services
 
         public void DeleteProduct(int id)
         {
+            if (!_products.Any())
+                return;
+                
             _products.RemoveAll(p => p.Id == id);
         }
     }

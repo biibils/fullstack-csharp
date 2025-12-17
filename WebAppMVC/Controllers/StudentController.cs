@@ -3,52 +3,25 @@ using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using WebAppMVC.Models;
-using WebAppMVC.ViewModels;
-using WebAppMVC.Services;
+using WebAppMVC.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebAppMVC.Controllers
 {
     public class StudentController : Controller
     {
-        private readonly IStudentService _studentService;
+        private readonly AppDbContext _context;
 
         // Dependensi Injection melalui konstruktor
-        public StudentController(IStudentService studentService)
+        public StudentController(AppDbContext context)
         {
-            _studentService = studentService;
+            _context = context;
         }
 
-        public IActionResult Index(string? search, int? minAge, int? maxAge)
+        // GET: Student
+				public async Task<IActionResult> Index()
         {
-            var students = _studentService.GetAllStudents();
-
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                students = students.Where(s => s.Name.Contains(search) || s.Email.Contains(search)).ToList();
-            }
-            if (minAge.HasValue)
-            {
-                students = students.Where(s => s.Age >= minAge.Value).ToList();
-            }
-            if (maxAge.HasValue)
-            {
-                students = students.Where(s => s.Age <= maxAge.Value).ToList();
-            }
-
-            var vm = new StudentFilterViewModel
-            {
-                Search = search,
-                MinAge = minAge,
-                MaxAge = maxAge,
-                Students = students.Select(s => new StudentViewModel
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Email = s.Email,
-                    Age = s.Age
-                }).ToList()
-            };
-            return View(vm);
+            return View(await _context.Students.ToListAsync());
         }
         
         // GET: Student/Create
@@ -60,22 +33,28 @@ namespace WebAppMVC.Controllers
         // POST: Student/Create
         [HttpPost]
         [ValidateAntiForgeryToken] // Protects against CSRF attacks
-        public IActionResult Create(Student student)
+        public async Task<IActionResult> Create([Bind("Id,Name,Email,Age")] Student student)
         {
             if (ModelState.IsValid)
             {
                 // Disini untuk menyimpan data student ke database
                 // Misalnya: _context.Students.Add(student);
-                _studentService.AddStudent(student);
+                _context.Add(student);
+								await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(student);
         }
 
         // GET: Student/Edit/{id}
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            var student = _studentService.GetStudentById(id);
+            if (id == null)
+						{
+							return NotFound();
+						}
+						
+						var student = await _context.Students.FindAsync(id);
             if (student == null)
             {
                 return NotFound();
@@ -86,7 +65,7 @@ namespace WebAppMVC.Controllers
         // POST: Student/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,Age")] Student student)
         {
             if (id != student.Id)
             {
@@ -95,16 +74,35 @@ namespace WebAppMVC.Controllers
 
             if (ModelState.IsValid)
             {
-                _studentService.UpdateStudent(student);
-                return RedirectToAction(nameof(Index));
+                try
+								{
+									_context.Update(student);
+									await _context.SaveChangesAsync();
+								}
+								catch (DbUpdateConcurrencyException)
+								{
+									if (!StudentExists(student.Id))
+									{
+										return NotFound();
+									}
+									else {
+										throw;
+									}
+								}
+								return RedirectToAction(nameof(Index));
             }
             return View(student);
         }
 
         // GET: Student/Delete/{id}
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var student = _studentService.GetStudentById(id);
+            if (id == null)
+						{
+							return NotFound();
+						}
+
+						var student = await _context.Students.FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
                 return NotFound();
@@ -115,16 +113,32 @@ namespace WebAppMVC.Controllers
         // POST: Student/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _studentService.DeleteStudent(id);
+            var student = await _context.Students.FindAsync(id);
+						if (student != null)
+						{
+							_context.Students.Remove(student);
+						}
+						
+						await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+				private bool StudentExists(int id)
+				{
+						return _context.Students.Any(e => e.Id == id);
+				}
+
         // GET: Student/Details/{id}
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var student = _studentService.GetStudentById(id);
+            if (id == null)
+						{
+							return NotFound();
+						}
+						
+						var student = await _context.Students.FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
                 return NotFound();

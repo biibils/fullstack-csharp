@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAppMVC.Models
 {
     public class Student
     {
-        public int Id { get; set; }
+        [Key]
+				public int Id { get; set; }
 
         [Required(ErrorMessage = "nama harus diisi")]
         [StringLength(100, ErrorMessage = "Nama tidak boleh lebih dari 100 karakter.")]

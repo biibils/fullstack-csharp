@@ -11,10 +11,19 @@ namespace WebAppMVC.Data
 
 		public DbSet<Student> Students { get; set; }
 
+		public DbSet<Course> Courses { get; set; }
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.Entity<Student>().ToTable("Students");
+			modelBuilder.Entity<Course>().ToTable("Courses");
+
+			// Configure many-to-many join table name
+			modelBuilder.Entity<Course>()
+				.HasMany(c => c.Students)
+				.WithMany(s => s.Courses)
+				.UsingEntity(j => j.ToTable("CourseStudents"));
 		}
  	}
 }

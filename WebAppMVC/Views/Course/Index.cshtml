@@ -1,21 +1,20 @@
-@model IEnumerable<WebAppMVC.Models.Student>
+@model IEnumerable<WebAppMVC.Models.Course>
 
 @{
-    ViewData["Title"] = "Daftar Siswa";
+    ViewData["Title"] = "Daftar Kursus";
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Tambah Siswa Baru</a>
+    <a asp-action="Add" class="btn btn-primary">Tambah Kursus Baru</a>
 </p>
 
 <table class="table table-striped">
     <thead>
         <tr>
             <th>@Html.DisplayNameFor(model => model.FirstOrDefault()!.Name)</th>
-            <th>@Html.DisplayNameFor(model => model.FirstOrDefault()!.Email)</th>
-            <th>@Html.DisplayNameFor(model => model.FirstOrDefault()!.Age)</th>
+            <th>Peserta</th>
             <th></th>
         </tr>
     </thead>
@@ -24,11 +23,11 @@
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                <td>@Html.DisplayFor(modelItem => item.Age)</td>
+                <td>@item.Participant</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     <a asp-action="Details" asp-route-id="@item.Id">Detail</a>
+                    <a asp-action="Manage" asp-route-id="@item.Id">Manage</a>
                     <a asp-action="Delete" asp-route-id="@item.Id">Hapus</a>
                 </td>
             </tr>
